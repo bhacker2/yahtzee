@@ -1,5 +1,5 @@
 import unittest
-from yahtzee import Dice, Turn, YahtzeeScorer
+from yahtzee import Dice, Turn, YahtzeeScorer, GameState
 
 class TestDice(unittest.TestCase):
     def test_roll(self):
@@ -50,6 +50,39 @@ class TestTurn(unittest.TestCase):
         self.assertIsInstance(newDice, Dice)
         self.assertIsNot(oldDice, newDice)
         self.assertFalse(turn.dice.held[0])
+
+
+class TestGameState(unittest.TestCase):
+    def test_initial_state(self):
+        game_state = GameState()
+        # Assert that all scores are initialized to None
+        for category in game_state.scores:
+            self.assertIsNone(game_state.scores[category])
+        # Assert that the turn is an instance of Turn
+        self.assertIsInstance(game_state.turn, Turn)
+        # Assert that the game is not over
+        self.assertFalse(game_state.game_over)
+        self.assertEqual(game_state.current_roll, []) 
+
+    def test_update_score(self):
+        game_state = GameState()
+        # Assert that the score is updated successfully
+        self.assertTrue(game_state.update_score("Ones", 5))
+        self.assertEqual(game_state.scores["Ones"], 5)
+        # Assert that the score is not updated if the category is invalid
+        self.assertFalse(game_state.update_score("Invalid Category", 10))
+        # Assert that the score is not updated if the category has already been used
+        game_state.update_score("Twos", 10)
+        self.assertFalse(game_state.update_score("Twos", 20))
+
+    def test_is_game_over(self):
+        game_state = GameState()
+        # Assert that the game is not over initially
+        self.assertFalse(game_state.is_game_over())
+        # Assert that the game is over when all scores are updated
+        for category in game_state.scores:
+            game_state.update_score(category, 0)  # Update all scores
+        self.assertTrue(game_state.is_game_over())
 
 class TestYahtzeeScorer(unittest.TestCase):
     def test_calculate_score_ones(self):

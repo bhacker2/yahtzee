@@ -3,7 +3,7 @@ import random
 class Dice:
     def __init__(self, num_dice=5):
         self.num_dice = num_dice
-        self.values = [0] * num_dice
+        self.values = [random.randint(1, 6) for _ in range(num_dice)]  # Initialize with random values
         self.held = [False] * num_dice  # Track held dice
 
     def roll(self, hold=None):
@@ -30,6 +30,7 @@ class Turn:
         if self.rolls < 3:
             self.dice.roll(hold)
             self.rolls += 1
+            print(f"Rolled dice: {self.dice.values}")
             return self.dice.values
         else:
             return None  # No more rolls allowed
@@ -44,6 +45,55 @@ class Turn:
         self.rolls = 0
         self.dice = Dice()
 
+class GameState:
+    def __init__(self):
+        self.scores = {
+            "Ones": None,
+            "Twos": None,
+            "Threes": None,
+            "Fours": None,
+            "Fives": None,
+            "Sixes": None,
+            "Three of a Kind": None,
+            "Four of a Kind": None,
+            "Full House": None,
+            "Small Straight": None,
+            "Large Straight": None,
+            "Yahtzee": None,
+            "Chance": None,
+        }
+        self.turn = Turn()
+        self.game_over = False  # Track if the game is over
+        self.current_roll = []  # Store dice values from the current roll
+        self.held_dice = []  # Store indices of held dice
+        
+    def update_score(self, category, score):
+        if category in self.scores and self.scores[category] is None:
+            self.scores[category] = score
+            return True  # Score updated successfully
+        return False  # Score update failed (category used or invalid)
+
+    def calculate_upper_section_bonus(self):
+        upper_section_score = 0
+        for category in ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes"]:
+            if self.scores[category] is not None:
+                upper_section_score += self.scores[category]
+        if upper_section_score >= 63:
+            return 35
+        else:
+            return 0
+    
+    def calculate_grand_total(self):
+        grand_total = 0
+        for score in self.scores.values():
+            if score is not None:
+                grand_total += score
+        grand_total += calculate_upper_section_bonus()        
+        return grand_total
+        
+    def is_game_over(self):
+        return all(value is not None for value in self.scores.values())
+    
 class YahtzeeScorer:
     @staticmethod
     def calculate_score(roll, category):

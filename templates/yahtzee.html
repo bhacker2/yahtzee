@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Yahtzee</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <h1>Yahtzee</h1>
+    
+        <form method="post">
+            <div id="dice-area">
+                {% for i in range(dice_images|length) %}
+                <div class="die-container">
+                    <img src="{{ url_for('static', filename='images/' + dice_images[i]) }}" alt="Dice">
+                    <input type="checkbox" id="hold-{{ i }}" name="hold" value="{{ i }}"
+                        {% if i in game_state.held_dice %} checked {% endif %}>
+                </div>
+                {% endfor %}
+            </div>
+            <div id="controls">
+                <p>Roll: {{ turn.rolls }}</p>
+                <button type="submit" name="action" value="roll" {% if turn.rolls == 3 %} disabled {% endif %}>Roll</button>
+            </div>
+        </form>
+        
+        <form method="post">
+            <div id="scoreboard">
+                <h2>Scoreboard</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Score</th>
+                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>Ones</td>
+                                <td id="ones-score">{{ scores["Ones"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Twos</td>
+                                <td id="twos-score">{{ scores["Twos"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Threes</td>
+                                <td id="threes-score">{{ scores["Threes"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Fours</td>
+                                <td id="fours-score">{{ scores["Fours"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Fives</td>
+                                <td id="fives-score">{{ scores["Fives"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Sixes</td>
+                                <td id="sixes-score">{{ scores["Sixes"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Upper Section Bonus</td>
+                                <td>{{ bonus }}</td>
+                            </tr>
+                            <tr>
+                                <td>Three of a Kind</td>
+                                <td id="three-of-a-kind-score">{{ scores["Three of a Kind"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Four of a Kind</td>
+                                <td id="four-of-a-kind-score">{{ scores["Four of a Kind"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Full House</td>
+                                <td id="full-house-score">{{ scores["Full House"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Small Straight</td>
+                                <td id="small-straight-score">{{ scores["Small Straight"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Large Straight</td>
+                                <td id="large-straight-score">{{ scores["Large Straight"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Yahtzee</td>
+                                <td id="yahtzee-score">{{ scores["Yahtzee"] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Chance</td>
+                                <td id="chance-score">{{ scores["Chance"] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% if game_over %}
+                    <h2>Game Over!</h2>
+                    <p>Grand Total: {{ grand_total }}</p>
+                {% endif %}
+            <select name="category">
+                <option value="">Select Category</option>
+                <option value="Ones">Ones</option>
+                <option value="Twos">Twos</option>
+                <option value="Threes">Threes</option>
+                <option value="Fours">Fours</option>
+                <option value="Fives">Fives</option>
+                <option value="Sixes">Sixes</option>
+                <option value="Three of a Kind">Three of a Kind</option>
+                <option value="Four of a Kind">Four of a Kind</option>
+                <option value="Full House">Full House</option>
+                <option value="Small Straight">Small Straight</option>
+                <option value="Large Straight">Large Straight</option>
+                <option value="Yahtzee">Yahtzee</option>
+                <option value="Chance">Chance</option>
+            </select>
+            <button type="submit" name="action" value="score">Score</button>
+            <button type="submit" name="action" value="new_game">New Game</button>
+        </form>
+    </body>
+</html>
