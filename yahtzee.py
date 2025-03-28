@@ -3,7 +3,8 @@ import random
 class Dice:
     def __init__(self, num_dice=5):
         self.num_dice = num_dice
-        self.values = [random.randint(1, 6) for _ in range(num_dice)]  # Initialize with random values
+        #self.values = [random.randint(1, 6) for _ in range(num_dice)]  # Initialize with random values
+        self.values = [0] * num_dice 
         self.held = [False] * num_dice  # Track held dice
 
     def roll(self, hold=None):
@@ -15,6 +16,9 @@ class Dice:
                 self.values[i] = random.randint(1, 6)
         return self.values
 
+    def getValues(self): 
+        return self.values
+    
     def hold_die(self, die_index):
         self.held[die_index] = True
 
@@ -30,13 +34,16 @@ class Turn:
         if self.rolls < 3:
             self.dice.roll(hold)
             self.rolls += 1
-            print(f"Rolled dice: {self.dice.values}")
-            return self.dice.values
+            print(f"Rolled dice: {self.dice.getValues()}")
+            return self.dice.getValues()
         else:
             return None  # No more rolls allowed
 
     def hold_die(self, die_index):
         self.dice.hold_die(die_index)
+
+    def roll(self):
+        self.dice.values()
 
     def release_die(self, die_index):
         self.dice.release_die(die_index)
@@ -72,6 +79,11 @@ class GameState:
             self.scores[category] = score
             return True  # Score updated successfully
         return False  # Score update failed (category used or invalid)
+    
+    def resetTurn(self):
+        self.turn = Turn()
+        self.current_roll = []  # Store dice values from the current roll
+        self.held_dice = []  # Store indices of held dice
 
     def calculate_upper_section_bonus(self):
         upper_section_score = 0
@@ -88,7 +100,7 @@ class GameState:
         for score in self.scores.values():
             if score is not None:
                 grand_total += score
-        grand_total += calculate_upper_section_bonus()        
+        grand_total += self.calculate_upper_section_bonus()        
         return grand_total
         
     def is_game_over(self):
@@ -157,6 +169,14 @@ class YahtzeeScorer:
                     return 50
             return 0
         # ... other scoring categories will go here
+
+    @staticmethod
+    def get_available_categories(roll, scores):
+        available_categories = []
+        for category in scores:
+            if scores[category] is None:
+                available_categories.append(category)
+        return available_categories
 
 # Example usage
 dice = Dice()

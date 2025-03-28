@@ -9,13 +9,15 @@ def yahtzee():
     global game_state  # Access the global game_state object
 
     dice_images = [
-        "dice-1.png",
-        "dice-2.png",
-        "dice-3.png",
-        "dice-4.png",
-        "dice-5.png",
+        "dice-0.png",
+        "dice-0.png",
+        "dice-0.png",
+        "dice-0.png",
+        "dice-0.png"
     ]
-    grand_total = 0
+
+    game_over = False  # Initialize game_over
+    grand_total = 0  # Initialize grand_total
 
     if request.method == "POST":
         action = request.form.get("action")  # Get the form action
@@ -48,19 +50,20 @@ def yahtzee():
 
             # Calculate score for the selected category
             if category:
-                score = YahtzeeScorer.calculate_score(game_state.current_roll, category)  # Use current_roll
+                score = YahtzeeScorer.calculate_score(
+                    game_state.current_roll, category
+                )  # Use current_roll
                 game_state.update_score(category, score)
-            game_state.turn = Turn()  # Reset turn after scoring
-            game_state.current_roll = []  # Reset current roll
-            game_state.held_dice = []
-        
+
+            game_state.resetTurn()
+            #game_state.turn = Turn()  # Reset turn after scoring
+            #game_state.held_dice = []  # Reset held dice
         elif action == "new_game":
             game_state = GameState()  # Create a new GameState object
 
         game_over = game_state.is_game_over()  # Check if game is over
         if game_over:
             grand_total = game_state.calculate_grand_total()  # Calculate grand total
-
 
     else:
         # Initial roll
@@ -69,10 +72,31 @@ def yahtzee():
         if dice_values is not None:
             dice_images = [f"dice-{value}.png" for value in dice_values]
         game_state.current_roll = dice_values  # Store initial roll
-    
-    bonus = game_state.calculate_upper_section_bonus()
 
-    return render_template("yahtzee.html", dice_images=dice_images, scores=game_state.scores, turn=game_state.turn, game_state=game_state, bonus=bonus, game_over=game_over, grand_total=grand_total)
+    # Calculate available categories
+    available_categories = YahtzeeScorer.get_available_categories(
+        game_state.current_roll, game_state.scores
+    )
+
+    # Calculate potential scores
+    potential_scores = {}
+    for category in available_categories:
+        potential_scores[category] = YahtzeeScorer.calculate_score(
+            game_state.current_roll, category
+        )
+
+    return render_template(
+        "yahtzee.html",
+        dice_images=dice_images,
+        scores=game_state.scores,
+        turn=game_state.turn,
+        bonus=game_state.calculate_upper_section_bonus(),
+        game_over=game_over,
+        grand_total=grand_total,
+        available_categories=available_categories,
+        potential_scores=potential_scores,  # Pass potential scores
+        game_state=game_state,
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -2,6 +2,12 @@ import unittest
 from yahtzee import Dice, Turn, YahtzeeScorer, GameState
 
 class TestDice(unittest.TestCase):
+    def test_initial_state(self):
+        #test initial state
+        dice = Dice()
+        self.assertEqual(dice.getValues(), [0,0,0,0,0])
+        self.assertEqual(dice.held, [False, False, False, False, False])
+
     def test_roll(self):
         dice = Dice()
         roll = dice.roll()
@@ -9,15 +15,26 @@ class TestDice(unittest.TestCase):
         for value in roll:
             self.assertTrue(1 <= value <= 6)  # Check if dice values are within range
 
+    def test_hold_and_release(self):
+        dice = Dice()
+        roll = dice.roll()
+        self.assertFalse(dice.held[2])
+        dice.hold_die(2)
+        self.assertTrue(dice.held[2])
+        dice.release_die(2)
+        self.assertFalse(dice.held[2])
+
 
 class TestTurn(unittest.TestCase):
     def test_initial_state(self):
         turn = Turn()
         self.assertIsInstance(turn.dice, Dice)
+        self.assertTrue(turn.roll, [0,0,0,0,0])
         self.assertEqual(turn.rolls, 0)
     def test_roll_dice(self):
         turn = Turn()
-        self.assertEqual(turn.rolls, 0)  
+        self.assertEqual(turn.rolls, 0) 
+        self.assertTrue(turn.roll, [0,0,0,0,0]) 
         turn1 = turn.roll_dice()
         self.assertEqual(turn.rolls, 1)   
         turn2 = turn.roll_dice()
@@ -62,6 +79,7 @@ class TestGameState(unittest.TestCase):
         self.assertIsInstance(game_state.turn, Turn)
         # Assert that the game is not over
         self.assertFalse(game_state.game_over)
+        self.assertEqual(game_state.current_roll, []) 
         self.assertEqual(game_state.current_roll, []) 
 
     def test_update_score(self):
