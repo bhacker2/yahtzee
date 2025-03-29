@@ -75,12 +75,14 @@ class GameState:
         self.held_dice = []  # Store indices of held dice
         
     def update_score(self, category, score):
+        print("Update Score")
         if category in self.scores and self.scores[category] is None:
             self.scores[category] = score
             return True  # Score updated successfully
         return False  # Score update failed (category used or invalid)
     
     def resetTurn(self):
+        print("Reset Turn")
         self.turn = Turn()
         self.current_roll = []  # Store dice values from the current roll
         self.held_dice = []  # Store indices of held dice

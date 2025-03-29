@@ -59,11 +59,15 @@ def yahtzee():
             #game_state.turn = Turn()  # Reset turn after scoring
             #game_state.held_dice = []  # Reset held dice
         elif action == "new_game":
-            game_state = GameState()  # Create a new GameState object
+
+            abandon_game = request.form.get("abandon_game")
+            if abandon_game == "true" or game_state.is_game_over():
+                game_state = GameState()  # Create a new GameState object
 
         game_over = game_state.is_game_over()  # Check if game is over
         if game_over:
             grand_total = game_state.calculate_grand_total()  # Calculate grand total
+
 
     else:
         # Initial roll
@@ -71,7 +75,7 @@ def yahtzee():
         # Update dice images based on rolled values
         if dice_values is not None:
             dice_images = [f"dice-{value}.png" for value in dice_values]
-        game_state.current_roll = dice_values  # Store initial roll
+            game_state.current_roll = dice_values  # Store initial roll
 
     # Calculate available categories
     available_categories = YahtzeeScorer.get_available_categories(
@@ -99,4 +103,4 @@ def yahtzee():
     )
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')

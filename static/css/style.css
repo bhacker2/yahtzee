@@ -10,3 +10,31 @@
     display: block;       /* Make the image a block-level element */
     margin-bottom: 5px;   /* Add spacing between image and checkbox */
 }
+
+.available-score {
+    font-weight: bold;       /* Make the text bold */
+    color: green;           /* Change the text color to green */
+    background-color: lightyellow; /* Add a light background color */
+}
+
+@keyframes roll {
+    0% {
+        transform: rotate(0deg) translate(0, 0);
+    }
+    25% {
+        transform: rotate(90deg) translate(5px, -5px);
+    }
+    50% {
+        transform: rotate(180deg) translate(0, 0);
+    }
+    75% {
+        transform: rotate(270deg) translate(-5px, 5px);
+    }
+    100% {
+        transform: rotate(360deg) translate(0, 0);
+    }
+}
+
+.rolling {
+    animation: roll 0.5s ease-in-out; /* Adjust duration and timing function as needed */
+}

@@ -31,6 +31,7 @@ class TestTurn(unittest.TestCase):
         self.assertIsInstance(turn.dice, Dice)
         self.assertTrue(turn.roll, [0,0,0,0,0])
         self.assertEqual(turn.rolls, 0)
+        
     def test_roll_dice(self):
         turn = Turn()
         self.assertEqual(turn.rolls, 0) 
