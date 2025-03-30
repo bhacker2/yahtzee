@@ -222,8 +222,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        
+
                 {% if game_over %}
                     <h2>Game Over!</h2>
                     <p>Upper Section Bonus: {{ bonus }}</p>
@@ -277,27 +276,26 @@
             });
 
             function confirmNewGame() {
+                // Create a hidden input for action
+                const actionInput = document.createElement("input");
+                actionInput.type = "hidden";
+                actionInput.name = "action";
+                actionInput.value = "new_game";
+                
+                // Append the hidden input to the form
+                const form = document.querySelector('form');
+                form.appendChild(actionInput);
+                
                 if (!{{ game_over | lower }}) { // Check if game_over is false
                     if (confirm("Are you sure you want to abandon this game? (y/n)")) {
                         document.getElementById('abandon-game').value = "true";
-
-                         // Create a hidden input for action
-                        const actionInput = document.createElement("input");
-                        actionInput.type = "hidden";
-                        actionInput.name = "action";
-                        actionInput.value = "new_game";
-
-                        // Append the hidden input to the form
-                        const form = document.querySelector('form');
-                        form.appendChild(actionInput);
-
-                        document.querySelector('form').submit();
+                        form.submit();
                     }
                 } else {
-                    document.querySelector('form').submit(); // Proceed with new game if game is over
+                    form.submit(); // Proceed with new game if game is over
                 }
             }
-            
+                        
             const rollButton = document.querySelector('button[name="action"][value="roll"]');
             const diceImages = document.querySelectorAll('#dice-area img');
             const holdCheckboxes = document.querySelectorAll('#dice-area input[name="hold"]');
