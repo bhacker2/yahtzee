@@ -60,9 +60,11 @@ def yahtzee():
             #game_state.held_dice = []  # Reset held dice
         elif action == "new_game":
 
-            abandon_game = request.form.get("abandon_game")
-            if abandon_game == "true" or game_state.is_game_over():
+            #abandon_game = request.form.get("abandon_game")
+            #if abandon_game == "true" or game_state.is_game_over():
                 game_state = GameState()  # Create a new GameState object
+        elif action == "forceNew": 
+            game_state = GameState()  # Create a new GameState object
 
         game_over = game_state.is_game_over()  # Check if game is over
         if game_over:
