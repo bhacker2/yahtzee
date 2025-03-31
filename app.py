@@ -96,6 +96,7 @@ def yahtzee():
         turn=game_state.turn,
         bonus=game_state.calculate_upper_section_bonus(),
         game_over=game_over,
+        upper_total=game_state.upper_total(),
         grand_total=grand_total,
         available_categories=available_categories,
         potential_scores=potential_scores,  # Pass potential scores

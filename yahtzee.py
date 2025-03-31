@@ -87,12 +87,15 @@ class GameState:
         self.current_roll = []  # Store dice values from the current roll
         self.held_dice = []  # Store indices of held dice
 
-    def calculate_upper_section_bonus(self):
+    def upper_total(self):
         upper_section_score = 0
         for category in ["Ones", "Twos", "Threes", "Fours", "Fives", "Sixes"]:
             if self.scores[category] is not None:
                 upper_section_score += self.scores[category]
-        if upper_section_score >= 63:
+        return upper_section_score
+    
+    def calculate_upper_section_bonus(self):
+        if self.upper_total() >= 63:
             return 35
         else:
             return 0

@@ -33,7 +33,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class="section-header">
+                            <td colspan="2">Upper Section</td>
+                        </tr>
+                        <!-- Ones through Sixes rows with class="upper-section" -->
+                         <tr>
                             <td>Ones</td>
                             <td id="ones-score">
                                 {% if "Ones" in available_categories %}
@@ -117,6 +121,23 @@
                                 {% endif %}
                             </td>
                         </tr>
+                        <tr class="upper-bonus">
+                            <td>Upper Bonus</td>
+                            <td>
+                                <div class="bonus-container">
+                                    <div class="bonus-progress-bar">
+                                        <div class="bonus-progress" style="width: {{ (upper_total / 63) * 100 }}%"></div>
+                                    </div>
+                                    <div class="bonus-text">
+                                        {{ upper_total }}/63 ({{ 35 if upper_total >= 63 else "0" }})
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="section-header">
+                            <td colspan="2">Lower Section</td>
+                        </tr>
+                        <!-- Three of a Kind through Chance rows with class="lower-section" -->
                         <tr>
                             <td>Three of a Kind</td>
                             <td id="three-of-a-kind-score">
@@ -277,24 +298,23 @@
             });
 
             function confirmNewGame() {
+                // Create a hidden input for action
+                const actionInput = document.createElement("input");
+                actionInput.type = "hidden";
+                actionInput.name = "action";
+                actionInput.value = "new_game";
+                
+                // Append the hidden input to the form
+                const form = document.querySelector('form');
+                form.appendChild(actionInput);
+                
                 if (!{{ game_over | lower }}) { // Check if game_over is false
                     if (confirm("Are you sure you want to abandon this game? (y/n)")) {
                         document.getElementById('abandon-game').value = "true";
-
-                         // Create a hidden input for action
-                        const actionInput = document.createElement("input");
-                        actionInput.type = "hidden";
-                        actionInput.name = "action";
-                        actionInput.value = "new_game";
-
-                        // Append the hidden input to the form
-                        const form = document.querySelector('form');
-                        form.appendChild(actionInput);
-
-                        document.querySelector('form').submit();
+                        form.submit();
                     }
                 } else {
-                    document.querySelector('form').submit(); // Proceed with new game if game is over
+                    form.submit(); // Proceed with new game if game is over
                 }
             }
             

@@ -1,3 +1,50 @@
+.upper-section {
+    background-color: #f0f8ff; /* Light blue background */
+    border-bottom: 2px solid #888;
+}
+
+.lower-section {
+    background-color: #fffaf0; /* Light warm background */
+    margin-top: 5px;
+}
+
+.section-header {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 0;
+}
+
+.upper-bonus {
+    background-color: #e6f7ff;
+    border-top: 1px dashed #aaa;
+    border-bottom: 2px solid #888;
+}
+.bonus-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.bonus-progress-bar {
+    height: 15px;
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bonus-progress {
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.5s ease-in-out;
+}
+
+.bonus-text {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
 .die-container {
     display: inline-block; /* Keep dice in a row */
     margin-right: 10px;    /* Add spacing between dice */
