@@ -8,248 +8,253 @@
         <h1>Yahtzee</h1>
     
         <form method="post">
-            <div id="dice-area">
-                {% for i in range(dice_images|length) %}
-                <div class="die-container">
-                    <img src="{{ url_for('static', filename='images/' + dice_images[i]) }}" alt="Dice">
-                    <input type="checkbox" id="hold-{{ i }}" name="hold" value="{{ i }}"
-                        {% if i in game_state.held_dice %} checked {% endif %}>
+            <div class="game-container">
+                <div class="game-left">    
+                    <div id="dice-area">
+                        {% for i in range(dice_images|length) %}
+                        <div class="die-container">
+                            <img src="{{ url_for('static', filename='images/' + dice_images[i]) }}" alt="Dice">
+                            <input type="checkbox" id="hold-{{ i }}" name="hold" value="{{ i }}"
+                                {% if i in game_state.held_dice %} checked {% endif %}>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div id="controls">
+                        <p>Roll: {{ turn.rolls }}</p>
+                        <button type="submit" name="action" value="roll" {% if turn.rolls == 3 %} disabled {% endif %}>Roll</button>
+                        <button type="button" name="action" value="new_game" onclick="confirmNewGame()">New Game</button>
+                        <input type="hidden" id="abandon-game" name="abandon_game" value="false">
+                    </div>
                 </div>
-                {% endfor %}
-            </div>
-            <div id="controls">
-                <p>Roll: {{ turn.rolls }}</p>
-                <button type="submit" name="action" value="roll" {% if turn.rolls == 3 %} disabled {% endif %}>Roll</button>
-                <button type="button" name="action" value="new_game" onclick="confirmNewGame()">New Game</button>
-                <input type="hidden" id="abandon-game" name="abandon_game" value="false">
-            </div>
-            <div id="scoreboard">
-                <h2>Scoreboard</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="section-header">
-                            <td colspan="2">Upper Section</td>
-                        </tr>
-                        <!-- Ones through Sixes rows with class="upper-section" -->
-                         <tr>
-                            <td>Ones</td>
-                            <td id="ones-score">
-                                {% if "Ones" in available_categories %}
-                                    <button type="button" name="category" value="Ones" onclick="setActionAndSubmit('score', 'Ones')"
-                                        {% if potential_scores["Ones"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Ones"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Ones"] is not none %}
-                                    {{ scores["Ones"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Twos</td>
-                            <td id="twos-score">
-                                {% if "Twos" in available_categories %}
-                                    <button type="button" name="category" value="Twos" onclick="setActionAndSubmit('score', 'Twos')"
-                                        {% if potential_scores["Twos"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Twos"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Twos"] is not none %}
-                                    {{ scores["Twos"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Threes</td>
-                            <td id="threes-score">
-                                {% if "Threes" in available_categories %}
-                                    <button type="button" name="category" value="Threes" onclick="setActionAndSubmit('score', 'Threes')"
-                                        {% if potential_scores["Threes"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Threes"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Threes"] is not none %}
-                                    {{ scores["Threes"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Fours</td>
-                            <td id="fours-score">
-                                {% if "Fours" in available_categories %}
-                                    <button type="button" name="category" value="Fours" onclick="setActionAndSubmit('score', 'Fours')"
-                                        {% if potential_scores["Fours"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Fours"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Fours"] is not none %}
-                                    {{ scores["Fours"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Fives</td>
-                            <td id="fives-score">
-                                {% if "Fives" in available_categories %}
-                                    <button type="button" name="category" value="Fives" onclick="setActionAndSubmit('score', 'Fives')"
-                                        {% if potential_scores["Fives"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Fives"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Fives"] is not none %}
-                                    {{ scores["Fives"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Sixes</td>
-                            <td id="sixes-score">
-                                {% if "Sixes" in available_categories %}
-                                    <button type="button" name="category" value="Sixes" onclick="setActionAndSubmit('score', 'Sixes')"
-                                        {% if potential_scores["Sixes"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Sixes"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Sixes"] is not none %}
-                                    {{ scores["Sixes"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr class="upper-bonus">
-                            <td>Upper Bonus</td>
-                            <td>
-                                <div class="bonus-container">
-                                    <div class="bonus-progress-bar">
-                                        <div class="bonus-progress" style="width: {{ (upper_total / 63) * 100 }}%"></div>
+                <div id="scoreboard">
+                    <h2>Scoreboard</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="section-header">
+                                <td colspan="2">Upper Section</td>
+                            </tr>
+                            <!-- Ones through Sixes rows with class="upper-section" -->
+                            <tr>
+                                <td>Ones</td>
+                                <td id="ones-score">
+                                    {% if "Ones" in available_categories %}
+                                        <button type="button" name="category" value="Ones" onclick="setActionAndSubmit('score', 'Ones')"
+                                            {% if potential_scores["Ones"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Ones"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Ones"] is not none %}
+                                        {{ scores["Ones"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Twos</td>
+                                <td id="twos-score">
+                                    {% if "Twos" in available_categories %}
+                                        <button type="button" name="category" value="Twos" onclick="setActionAndSubmit('score', 'Twos')"
+                                            {% if potential_scores["Twos"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Twos"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Twos"] is not none %}
+                                        {{ scores["Twos"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Threes</td>
+                                <td id="threes-score">
+                                    {% if "Threes" in available_categories %}
+                                        <button type="button" name="category" value="Threes" onclick="setActionAndSubmit('score', 'Threes')"
+                                            {% if potential_scores["Threes"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Threes"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Threes"] is not none %}
+                                        {{ scores["Threes"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Fours</td>
+                                <td id="fours-score">
+                                    {% if "Fours" in available_categories %}
+                                        <button type="button" name="category" value="Fours" onclick="setActionAndSubmit('score', 'Fours')"
+                                            {% if potential_scores["Fours"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Fours"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Fours"] is not none %}
+                                        {{ scores["Fours"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Fives</td>
+                                <td id="fives-score">
+                                    {% if "Fives" in available_categories %}
+                                        <button type="button" name="category" value="Fives" onclick="setActionAndSubmit('score', 'Fives')"
+                                            {% if potential_scores["Fives"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Fives"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Fives"] is not none %}
+                                        {{ scores["Fives"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Sixes</td>
+                                <td id="sixes-score">
+                                    {% if "Sixes" in available_categories %}
+                                        <button type="button" name="category" value="Sixes" onclick="setActionAndSubmit('score', 'Sixes')"
+                                            {% if potential_scores["Sixes"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Sixes"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Sixes"] is not none %}
+                                        {{ scores["Sixes"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="upper-bonus">
+                                <td>Upper Bonus</td>
+                                <td>
+                                    <div class="bonus-container">
+                                        <div class="bonus-progress-bar">
+                                            <div class="bonus-progress" style="width: {{ (upper_total / 63) * 100 }}%"></div>
+                                        </div>
+                                        <div class="bonus-text">
+                                            {{ upper_total }}/63 ({{ 35 if upper_total >= 63 else "0" }})
+                                        </div>
                                     </div>
-                                    <div class="bonus-text">
-                                        {{ upper_total }}/63 ({{ 35 if upper_total >= 63 else "0" }})
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="section-header">
-                            <td colspan="2">Lower Section</td>
-                        </tr>
-                        <!-- Three of a Kind through Chance rows with class="lower-section" -->
-                        <tr>
-                            <td>Three of a Kind</td>
-                            <td id="three-of-a-kind-score">
-                                {% if "Three of a Kind" in available_categories %}
-                                    <button type="button" name="category" value="Three of a Kind"
-                                        onclick="setActionAndSubmit('score', 'Three of a Kind')"
-                                        {% if potential_scores["Three of a Kind"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Three of a Kind"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Three of a Kind"] is not none %}
-                                    {{ scores["Three of a Kind"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Four of a Kind</td>
-                            <td id="four-of-a-kind-score">
-                                {% if "Four of a Kind" in available_categories %}
-                                    <button type="button" name="category" value="Four of a Kind"
-                                        onclick="setActionAndSubmit('score', 'Four of a Kind')"
-                                        {% if potential_scores["Four of a Kind"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Four of a Kind"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Four of a Kind"] is not none %}
-                                    {{ scores["Four of a Kind"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Full House</td>
-                            <td id="full-house-score">
-                                {% if "Full House" in available_categories %}
-                                    <button type="button" name="category" value="Full House"
-                                        onclick="setActionAndSubmit('score', 'Full House')"
-                                        {% if potential_scores["Full House"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Full House"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Full House"] is not none %}
-                                    {{ scores["Full House"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Small Straight</td>
-                            <td id="small-straight-score">
-                                {% if "Small Straight" in available_categories %}
-                                    <button type="button" name="category" value="Small Straight"
-                                        onclick="setActionAndSubmit('score', 'Small Straight')"
-                                        {% if potential_scores["Small Straight"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Small Straight"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Small Straight"] is not none %}
-                                    {{ scores["Small Straight"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Large Straight</td>
-                            <td id="large-straight-score">
-                                {% if "Large Straight" in available_categories %}
-                                    <button type="button" name="category" value="Large Straight"
-                                        onclick="setActionAndSubmit('score', 'Large Straight')"
-                                        {% if potential_scores["Large Straight"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Large Straight"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Large Straight"] is not none %}
-                                    {{ scores["Large Straight"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Yahtzee</td>
-                            <td id="yahtzee-score">
-                                {% if "Yahtzee" in available_categories %}
-                                    <button type="button" name="category" value="Yahtzee" onclick="setActionAndSubmit('score', 'Yahtzee')"
-                                        {% if potential_scores["Yahtzee"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Yahtzee"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Yahtzee"] is not none %}
-                                    {{ scores["Yahtzee"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Chance</td>
-                            <td id="chance-score">
-                                {% if "Chance" in available_categories %}
-                                    <button type="button" name="category" value="Chance" onclick="setActionAndSubmit('score', 'Chance')"
-                                        {% if potential_scores["Chance"] > 0 %} class="available-score" {% endif %}>
-                                        Score ({{ potential_scores["Chance"] }})
-                                    </button>
-                                {% endif %}
-                                {% if scores["Chance"] is not none %}
-                                    {{ scores["Chance"] }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                            <tr class="section-header">
+                                <td colspan="2">Lower Section</td>
+                            </tr>
+                            <!-- Three of a Kind through Chance rows with class="lower-section" -->
+                            <tr>
+                                <td>Three of a Kind</td>
+                                <td id="three-of-a-kind-score">
+                                    {% if "Three of a Kind" in available_categories %}
+                                        <button type="button" name="category" value="Three of a Kind"
+                                            onclick="setActionAndSubmit('score', 'Three of a Kind')"
+                                            {% if potential_scores["Three of a Kind"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Three of a Kind"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Three of a Kind"] is not none %}
+                                        {{ scores["Three of a Kind"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Four of a Kind</td>
+                                <td id="four-of-a-kind-score">
+                                    {% if "Four of a Kind" in available_categories %}
+                                        <button type="button" name="category" value="Four of a Kind"
+                                            onclick="setActionAndSubmit('score', 'Four of a Kind')"
+                                            {% if potential_scores["Four of a Kind"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Four of a Kind"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Four of a Kind"] is not none %}
+                                        {{ scores["Four of a Kind"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Full House</td>
+                                <td id="full-house-score">
+                                    {% if "Full House" in available_categories %}
+                                        <button type="button" name="category" value="Full House"
+                                            onclick="setActionAndSubmit('score', 'Full House')"
+                                            {% if potential_scores["Full House"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Full House"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Full House"] is not none %}
+                                        {{ scores["Full House"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Small Straight</td>
+                                <td id="small-straight-score">
+                                    {% if "Small Straight" in available_categories %}
+                                        <button type="button" name="category" value="Small Straight"
+                                            onclick="setActionAndSubmit('score', 'Small Straight')"
+                                            {% if potential_scores["Small Straight"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Small Straight"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Small Straight"] is not none %}
+                                        {{ scores["Small Straight"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Large Straight</td>
+                                <td id="large-straight-score">
+                                    {% if "Large Straight" in available_categories %}
+                                        <button type="button" name="category" value="Large Straight"
+                                            onclick="setActionAndSubmit('score', 'Large Straight')"
+                                            {% if potential_scores["Large Straight"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Large Straight"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Large Straight"] is not none %}
+                                        {{ scores["Large Straight"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Yahtzee</td>
+                                <td id="yahtzee-score">
+                                    {% if "Yahtzee" in available_categories %}
+                                        <button type="button" name="category" value="Yahtzee" onclick="setActionAndSubmit('score', 'Yahtzee')"
+                                            {% if potential_scores["Yahtzee"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Yahtzee"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Yahtzee"] is not none %}
+                                        {{ scores["Yahtzee"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Chance</td>
+                                <td id="chance-score">
+                                    {% if "Chance" in available_categories %}
+                                        <button type="button" name="category" value="Chance" onclick="setActionAndSubmit('score', 'Chance')"
+                                            {% if potential_scores["Chance"] > 0 %} class="available-score" {% endif %}>
+                                            Score ({{ potential_scores["Chance"] }})
+                                        </button>
+                                    {% endif %}
+                                    {% if scores["Chance"] is not none %}
+                                        {{ scores["Chance"] }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                {% if game_over %}
-                    <h2>Game Over!</h2>
-                    <p>Upper Section Bonus: {{ bonus }}</p>
-                    <p>Grand Total: {{ grand_total }}</p>
-                {% endif %}
-            
+            {% if game_over %}
+            <h2>Game Over!</h2>
+            <p>Upper Section Bonus: {{ bonus }}</p>
+            <p>Grand Total: {{ grand_total }}</p>
+            {% endif %}
+
         </form>
         <script>
             function setActionAndSubmit(action, category) {

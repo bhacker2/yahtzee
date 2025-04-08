@@ -1,87 +1,290 @@
-.upper-section {
-    background-color: #f0f8ff; /* Light blue background */
-    border-bottom: 2px solid #888;
-}
-
-.lower-section {
-    background-color: #fffaf0; /* Light warm background */
-    margin-top: 5px;
-}
-
-.section-header {
-    background-color: #e0e0e0;
-    font-weight: bold;
+/* style.css - Compact Yahtzee Styling */
+/* Base styling and fonts */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #2c3e50;
+    margin: 0;
+    padding: 10px;
+    line-height: 1.3;
+  }
+  
+  h1 {
     text-align: center;
-    padding: 5px 0;
-}
-
-.upper-bonus {
-    background-color: #e6f7ff;
-    border-top: 1px dashed #aaa;
-    border-bottom: 2px solid #888;
-}
-.bonus-container {
+    color: #2c3e50;
+    margin: 10px 0;
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    color: #3498db;
+    margin: 10px 0;
+    font-size: 1.3rem;
+  }
+  
+  /* Main game container */
+  form {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  /* Changed layout: Remove side-by-side, stack elements vertically */
+  .game-container {
     display: flex;
     flex-direction: column;
-    width: 100%;
-}
-
-.bonus-progress-bar {
-    height: 15px;
-    width: 100%;
-    background-color: #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.bonus-progress {
-    height: 100%;
-    background-color: #4CAF50;
-    transition: width 0.5s ease-in-out;
-}
-
-.bonus-text {
-    text-align: center;
-    margin-top: 5px;
-    font-size: 0.9em;
-}
-.die-container {
-    display: inline-block; /* Keep dice in a row */
-    margin-right: 10px;    /* Add spacing between dice */
-    text-align: center;     /* Center the checkbox */
-}
-
-#dice-area img {
-    width: 50px;          /* Adjust the image size as needed */
-    height: 50px;
-    display: block;       /* Make the image a block-level element */
-    margin-bottom: 5px;   /* Add spacing between image and checkbox */
-}
-
-.available-score {
-    font-weight: bold;       /* Make the text bold */
-    color: green;           /* Change the text color to green */
-    background-color: lightyellow; /* Add a light background color */
-}
-
-@keyframes roll {
+    gap: 20px;
+  }
+  
+  /* Dice area styling - bigger dice */
+  #dice-area {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #ecf0f1;
+    border-radius: 6px;
+    perspective: 800px; /* Add perspective for 3D effects */
+  }
+  
+  .die-container {
+    position: relative;
+    padding-bottom: 20px; /* Added space for checkbox */
+    transform-style: preserve-3d; /* Enable 3D transformations */
+  }
+  
+  /* Increased dice size */
+  .die-container img {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+    transition: all 0.2s ease;
+    transform-origin: center center;
+  }
+  
+  /* Repositioned checkboxes with more space */
+  .die-container input[type="checkbox"] {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) scale(1.2);
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  /* NEW ENHANCED DICE ROLLING ANIMATION */
+  @keyframes diceRoll {
     0% {
-        transform: rotate(0deg) translate(0, 0);
+      transform: translateY(0) rotateX(0) rotateY(0) rotateZ(0);
     }
-    25% {
-        transform: rotate(90deg) translate(5px, -5px);
+    10% {
+      transform: translateY(-50px) rotateX(180deg) rotateY(90deg) rotateZ(45deg);
+    }
+    20% {
+      transform: translateY(5px) rotateX(270deg) rotateY(180deg) rotateZ(90deg);
+    }
+    30% {
+      transform: translateY(-30px) rotateX(360deg) rotateY(270deg) rotateZ(180deg);
+    }
+    40% {
+      transform: translateY(5px) rotateX(450deg) rotateY(360deg) rotateZ(270deg);
     }
     50% {
-        transform: rotate(180deg) translate(0, 0);
+      transform: translateY(-15px) rotateX(540deg) rotateY(450deg) rotateZ(360deg);
     }
-    75% {
-        transform: rotate(270deg) translate(-5px, 5px);
+    60% {
+      transform: translateY(5px) rotateX(630deg) rotateY(540deg) rotateZ(450deg);
+    }
+    70% {
+      transform: translateY(-5px) rotateX(720deg) rotateY(630deg) rotateZ(540deg);
+    }
+    80% {
+      transform: translateY(0) rotateX(810deg) rotateY(720deg) rotateZ(630deg);
+    }
+    90% {
+      transform: translateY(-3px) rotateX(900deg) rotateY(810deg) rotateZ(720deg);
     }
     100% {
-        transform: rotate(360deg) translate(0, 0);
+      transform: translateY(0) rotateX(1080deg) rotateY(900deg) rotateZ(1080deg);
     }
-}
-
-.rolling {
-    animation: roll 0.5s ease-in-out; /* Adjust duration and timing function as needed */
-}
+  }
+  
+  img.rolling {
+    animation: diceRoll 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+  
+  /* Controls styling */
+  #controls, #controls2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  #controls p {
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1rem;
+  }
+  
+  button:hover {
+    background-color: #2980b9;
+  }
+  
+  button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+  }
+  
+  button[value="roll"] {
+    background-color: #2ecc71;
+  }
+  
+  button[value="roll"]:hover {
+    background-color: #27ae60;
+  }
+  
+  button[value="forceNew"] {
+    background-color: #e74c3c;
+  }
+  
+  button[value="new_game"] {
+    background-color: #f39c12;
+  }
+  
+  /* Scoreboard styling */
+  #scoreboard {
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 0.95rem;
+    margin-top: 10px;
+  }
+  
+  #scoreboard h2 {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin: 0;
+  }
+  
+  #scoreboard table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+  }
+  
+  #scoreboard th {
+    background-color: #2c3e50;
+    color: white;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  #scoreboard td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #ecf0f1;
+  }
+  
+  /* Upper and Lower sections */
+  .section-header td {
+    background-color: #34495e;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 6px !important;
+    font-size: 0.9rem;
+  }
+  
+  .upper-section td {
+    background-color: #f8fafc;
+  }
+  
+  .lower-section td {
+    background-color: #f0f4f8;
+  }
+  
+  /* Score buttons */
+  #scoreboard button {
+    width: 100%;
+    padding: 6px;
+    text-align: center;
+    font-size: 0.85em;
+    background-color: #95a5a6;
+  }
+  
+  #scoreboard button.available-score {
+    background-color: #3498db;
+  }
+  
+  /* Upper bonus styling */
+  .upper-bonus td {
+    background-color: #e1f0fa !important;
+    border-top: 1px dashed #bdc3c7;
+    border-bottom: 1px solid #7f8c8d;
+    padding: 6px !important;
+  }
+  
+  .bonus-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .bonus-progress-bar {
+    height: 10px;
+    flex-grow: 1;
+    background-color: #ecf0f1;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .bonus-progress {
+    height: 100%;
+    background-color: #2ecc71;
+    transition: width 0.5s ease-in-out;
+  }
+  
+  .bonus-text {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    white-space: nowrap;
+  }
+  
+  /* Game over styling */
+  form > h2 {
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 15px;
+  }
+  
+  /* Final score display */
+  form > p {
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  /* Hide the Force New Game button unless needed */
+  #controls2 {
+    margin-top: 10px;
+  }
